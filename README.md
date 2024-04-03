@@ -44,3 +44,18 @@ sudo apt install zsh-autosuggestions
 ```
 
 Look in to potentially installing [zsh history substring search](https://github.com/zsh-users/zsh-history-substring-search)
+
+## Neovim
+
+Note: telescope-fzf-native.nvim requires `make` and `fzf` to be installed with `sudo apt install make fzf`
+
+[Vim Plug](https://github.com/junegunn/vim-plug)
+```
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+```
+
+Then `:source` the `plug_snapshot.vim` file
+
+## COC
+

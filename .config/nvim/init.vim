@@ -33,7 +33,8 @@ Plug 'jremmen/vim-ripgrep' " More cracked grep
 " Plug 'guns/vim-sexp' " Slurping
 Plug 'airblade/vim-rooter' " Move to root dir automatically
 Plug 'nvim-telescope/telescope.nvim' " Having a look
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+" Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'fannheyward/telescope-coc.nvim'
 Plug 'dhruvmanila/telescope-bookmarks.nvim', { 'tag': '*' }
 Plug 'cljoly/telescope-repo.nvim'
@@ -75,6 +76,8 @@ call plug#end()
 lua require('leap').add_default_mappings()
 
 " Coc config
+let g:coc_global_extensions = ['coc-clojure', 'coc-docker', 'coc-git', 'coc-json', 'coc-pyright', 'coc-rust-analyzer', 'coc-tsserver', 'coc-yaml', 'coc-go']
+
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
