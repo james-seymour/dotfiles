@@ -13,10 +13,8 @@ Plug 'tpope/vim-commentary' " Comment things out easily
 Plug 'tpope/vim-surround' " Change surrounding quotes with cs{old}{new}
 Plug 'google/vim-codefmt' " A nice formatter!
 Plug 'google/vim-glaive' " Config for codefmt
-Plug 'voldikss/vim-floaterm' " Open a floating terminal
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  } " Markdown preview
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'SmiteshP/nvim-gps' " Status bar for where im at
+Plug 'ggandor/leap.nvim'
 
 " Git integration
 Plug 'tpope/vim-fugitive' " Git integration using :G
@@ -28,15 +26,23 @@ Plug 'stsewd/fzf-checkout.vim' " Fuzzy search branches
 Plug 'google/vim-maktaba' " codefmt dependency
 Plug 'nvim-lua/plenary.nvim' " Telescope dependency
 Plug 'nvim-treesitter/nvim-treesitter' " Telescope dependency
+Plug 'nvim-lua/popup.nvim' " Telescope zoxide dependency
 Plug 'jremmen/vim-ripgrep' " More cracked grep
 
 " Directory movement and search
 " Plug 'guns/vim-sexp' " Slurping
 Plug 'airblade/vim-rooter' " Move to root dir automatically
 Plug 'nvim-telescope/telescope.nvim' " Having a look
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+Plug 'fannheyward/telescope-coc.nvim'
+Plug 'dhruvmanila/telescope-bookmarks.nvim', { 'tag': '*' }
+Plug 'cljoly/telescope-repo.nvim'
+Plug 'jvgrootveld/telescope-zoxide'
+Plug 'AckslD/nvim-neoclip.lua'
 Plug 'preservim/nerdtree' " A nice folder tree setup
 Plug 'Xuyuanp/nerdtree-git-plugin' " Git integration for nerdtree
+
+Plug 'github/copilot.vim'
 
 " Themes
 " Plug 'arcticicestudio/nord-vim'
@@ -53,20 +59,50 @@ Plug 'albertomontesg/lightline-asyncrun' " Integration of https://github.com/sky
 Plug 'edkolev/tmuxline.vim'
 
 " LSP
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-Plug 'pappasam/coc-jedi', { 'do': 'yarn install --frozen-lockfile && yarn build', 'branch': 'main' }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'Olical/conjure' " REPL support
 " Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins' } " Extra syntax highlighting for python
-
+Plug 'neovim/nvim-lspconfig'
+Plug 'simrat39/rust-tools.nvim'
 " Latex
 " Plug 'lervag/vimtex'
 " Plug 'sirver/ultisnips' " Snippets
 
 call plug#end()
 
-call mkdp#util#install() " Install markdown preview properly
 
-" Colooooourrrrss!
+" Leap config
+lua require('leap').add_default_mappings()
+
+" Coc config
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <leader>rn <Plug>(coc-rename)
+nmap <leader>ac  <Plug>(coc-codeaction)
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Coc trigger completion early
+inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
+      \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <C-n> coc#pum#visible() ? coc#pum#next(0) : "\<C-n>"
+inoremap <silent><expr> <C-n> coc#pum#visible() ? coc#pum#next(2) : "\<C-n>"
+
+" Coc Hover
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Colooooourrrrss! (maybe)
 set background=dark
 let g:everforest_background = 'soft'
 colorscheme everforest
@@ -87,7 +123,7 @@ let g:fzf_colors =
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
 
-" Vim builtins
+" Vim builtin config
 syntax on
 filetype plugin indent on
 set number relativenumber
@@ -106,9 +142,8 @@ set showtabline=2
 set softtabstop=2
 set shiftwidth=2
 set signcolumn=yes
-
-nnoremap H 0 
-" nnoremap L $ 
+" Use + as the default register
+set clipboard+=unnamedplus
 
 " Jump to last edit position on opening file
 if has("autocmd")
@@ -135,32 +170,20 @@ augroup autoformat_settings
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer black
   autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType vue AutoFormatBuffer prettier
+  autocmd FileType vue,typescript AutoFormatBuffer prettier
 augroup END
 
 nnoremap <leader>i :FormatCode<CR>
 
 map <leader>s :w<CR>
-map <leader>q :wq<CR>
-map <leader>rr :&&<CR>
+map <leader>q :w<CR><C-Z>
+map <leader>ra :&&<CR>
+
+" Random code snippets
+map <leader>cht :-1read $HOME/clickhouse-template<CR>
 
 
-function! SaveAndQuit()
-    if buflisted(bufname('.git/index'))
-        bd .git/index
-    else
-        G | resize 15 " Don't want it to take up half of the page!
-    endif
-endfunction
-
-
-" Telescope config
-nnoremap <leader>ff <cmd>Telescope find_files<CR>
-nnoremap <leader>fr <cmd>Telescope oldfiles<CR><ESC>
-nnoremap <leader>fg <cmd>Telescope live_grep<CR>
-
-" Nerdtree confi
-nnoremap <leader>n :NERDTreeToggle<CR>
+" Nerdtree config
 nnoremap <C-f> :NERDTreeFind<CR>
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif " Quit vim if nerd tree is the last open
 
@@ -168,9 +191,8 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 let g:rooter_patterns = ['.git', '=src', '=cubiko']
 
 " Comment out like VSCode
-nnoremap <C-_> :Commentary<CR>
-inoremap <C-_> :Commentary<CR>
-vnoremap <C-_> :Commentary<CR>
+nnoremap <C-c> :Commentary<CR>
+vnoremap <C-c> :Commentary<CR>
 
 " Make brackets make sense
 nnoremap { }
@@ -178,29 +200,16 @@ nnoremap } {
 vnoremap { }
 vnoremap } {
 
-" NO ARROWS
-" nnoremap <up> <nop>
-" nnoremap <down> <nop>
-" inoremap <up> <nop>
-" inoremap <down> <nop>
-" inoremap <left> <nop>
-" inoremap <right> <nop>
 " TMUX prefix key shouldn't map
 nnoremap <C-a> <nop>
 
 " VSCode like working tree
 nnoremap <leader>wt :Gdiffsplit<CR>
 
-" Markdown preview
-nnoremap <leader>mp :MarkdownPreview<CR>
-let g:mkdp_auto_start = 0
-
 " Git gutter
 let g:gitgutter_realtime=1
 autocmd BufRead,BufNewFile * setlocal signcolumn=yes
 set updatetime=1000 " gitgutter not responding fast enough
-nnoremap ]c :GitGutterNextHunk<CR>
-nnoremap [c :GitGutterPrevHunk<CR>
 
 " Git fugitive
 function! ToggleGStatus()
@@ -218,23 +227,9 @@ command ToggleGStatus :call ToggleGStatus()
 nnoremap <leader>gs :ToggleGStatus<CR>
 
 let g:fzf_checkout_git_options = '--sort=-committerdate'
-nnoremap <leader>gb :GBranches<CR>
 
 " Git blame
 nnoremap <leader>bl :BlamerToggle<CR>
-
-" Coc config
-nmap gd <Plug>(coc-definition)
-nmap gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Floaterm
-let g:floaterm_shell="zsh"
-let g:floaterm_title="floatyboi"
-let g:floaterm_width=0.7
-let g:floaterm_height=0.9
-nnoremap tt :FloatermToggle<CR>
-tnoremap tt <C-\><C-n> :FloatermToggle<CR>
 
 " Lightline config
  function! LightlineFullFilename()
@@ -246,142 +241,20 @@ tnoremap tt <C-\><C-n> :FloatermToggle<CR>
    return printf('+%d ~%d -%d', a, m, r)
  endfunction
 
- lua require("nvim-gps").setup()
-
- function! NvimGps()
- 	return luaeval("require('nvim-gps').is_available()") ?
- 		\ luaeval("require('nvim-gps').get_location()") : ''
- endfunction
-
  let g:lightline = {
        \ 'colorscheme': 'everforest',
        \ 'active': {
        \   'left': [ [ 'mode', 'paste' ],
-       \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'gps' ] ]
+       \             [ 'gitbranch', 'cocstatus', 'readonly', 'filename', 'modified'] ]
        \ },
        \ 'component_function': {
+	     \   'cocstatus': 'coc#status',
        \   'filename': 'LightlineFullFilename',
        \   'gitbranch': 'FugitiveHead',
        \   'gitmodified': 'LightlineGitStatus',
-       \   'gps': 'NvimGps'
        \ },
        \ }
 let g:lightline#extensions#tmuxline#enabled = 0
-
-"" {{{lightline.vim
-" let g:lightline = {}
-" let g:lightline.separator = { 'left': "\ue0b8", 'right': "\ue0be" }
-" let g:lightline.subseparator = { 'left': "\ue0b9", 'right': "\ue0b9" }
-" let g:lightline.tabline_separator = { 'left': "\ue0bc", 'right': "\ue0ba" }
-" let g:lightline.tabline_subseparator = { 'left': "\ue0bb", 'right': "\ue0bb" }
-" let g:lightline#asyncrun#indicator_none = ''
-" let g:lightline#asyncrun#indicator_run = 'Running...'
-" let g:vim_lightline_artify = 0
-" if g:vim_lightline_artify == 0
-"   let g:lightline.active = {
-"         \ 'left': [ [ 'mode', 'paste' ],
-"         \           [ 'readonly', 'filename', 'modified', 'fileformat', 'devicons_filetype' ] ],
-"         \ 'right': [ [ 'lineinfo' ],
-"         \            [ 'linter_errors', 'linter_warnings', 'linter_ok'],
-"         \           [ 'asyncrun_status', 'coc_status' ] ]
-"         \ }
-"   let g:lightline.inactive = {
-"         \ 'left': [ [ 'filename' , 'modified', 'fileformat', 'devicons_filetype' ]],
-"         \ 'right': [ [ 'lineinfo' ] ]
-"         \ }
-"   let g:lightline.tabline = {
-"         \ 'left': [ [ 'vim_logo', 'tabs' ] ],
-"         \ 'right': [ [ 'git_global' ],
-"         \ [ 'git_buffer' ] ]
-"         \ }
-"   let g:lightline.tab = {
-"         \ 'active': [ 'tabnum', 'filename', 'modified' ],
-"         \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
-" else
-"   let g:lightline.active = {
-"         \ 'left': [ [ 'artify_mode', 'paste' ],
-"         \           [ 'readonly', 'filename', 'modified', 'fileformat', 'devicons_filetype' ] ],
-"         \ 'right': [ [ 'artify_lineinfo' ],
-"         \            [ 'linter_errors', 'linter_warnings', 'linter_ok'],
-"         \           [ 'asyncrun_status', 'coc_status' ] ]
-"         \ }
-"   let g:lightline.inactive = {
-"         \ 'left': [ [ 'filename' , 'modified', 'fileformat', 'devicons_filetype' ]],
-"         \ 'right': [ [ 'artify_lineinfo' ] ]
-"         \ }
-"   let g:lightline.tabline = {
-"         \ 'left': [ [ 'vim_logo', 'tabs' ] ],
-"         \ 'right': [ [ 'git_global' ],
-"         \ [ 'git_buffer' ] ]
-"         \ }
-"   let g:lightline.tab = {
-"         \ 'active': [ 'artify_activetabnum', 'artify_filename', 'modified' ],
-"         \ 'inactive': [ 'artify_inactivetabnum', 'filename', 'modified' ] }
-" endif
-" let g:lightline.tab_component_function = {
-"       \ 'artify_activetabnum': 'custom#lightline#artify_active_tabnum',
-"       \ 'artify_inactivetabnum': 'custom#lightline#artify_inactive_tabnum',
-"       \ 'artify_filename': 'custom#lightline#artify_tabname',
-"       \ 'tabnum': 'custom#lightline#tabnum',
-"       \ 'filename': 'lightline#tab#filename',
-"       \ 'modified': 'lightline#tab#modified',
-"       \ 'readonly': 'lightline#tab#readonly'
-"       \ }
-" let g:lightline.component = {
-"       \ 'git_buffer' : '%{get(b:, "coc_git_status", "")}',
-"       \ 'git_global' : '%{custom#lightline#git_global()}',
-"       \ 'artify_mode': '%{custom#lightline#artify_mode()}',
-"       \ 'artify_lineinfo': "%2{custom#lightline#artify_line_percent()}\uf295 %3{custom#lightline#artify_line_num()}:%-2{custom#lightline#artify_column_num()}",
-"       \ 'vim_logo': "\ue7c5",
-"       \ 'mode': '%{lightline#mode()}',
-"       \ 'filename': '%t',
-"       \ 'fileformat': '%{&fenc!=#""?&fenc:&enc}[%{&ff}]',
-"       \ 'modified': '%M',
-"       \ 'paste': '%{&paste?"PASTE":""}',
-"       \ 'readonly': '%R',
-"       \ 'lineinfo': '%2p%% %3l:%-2v'
-"       \ }
-" let g:lightline.component_function = {
-"       \ 'devicons_filetype': 'custom#lightline#devicons',
-"       \ 'coc_status': 'custom#lightline#coc_status'
-"       \ }
-" let g:lightline.component_expand = {
-"       \ 'linter_warnings': 'custom#lightline#coc_diagnostic_warning',
-"       \ 'linter_errors': 'custom#lightline#coc_diagnostic_error',
-"       \ 'linter_ok': 'custom#lightline#coc_diagnostic_ok',
-"       \ 'asyncrun_status': 'lightline#asyncrun#status'
-"       \ }
-" let g:lightline.component_type = {
-"       \ 'linter_warnings': 'warning',
-"       \ 'linter_errors': 'error'
-"       \ }
-" " }}}
-
-" VimTex
-" set nocompatible
-" let &rtp = '~/.local/share/nvim/plugged' . &rtp
-" let &rtp .= '~/.local/share/nvim/plugged'
-" let g:vimtex_latexmk_continuous=1
-" let g:tex_flavor='latex'
-" let g:Tex_DefaultTargetFormat='pdf'
-" let g:vimtex_view_enabled=1
-" let g:vimtex_view_automatic=1
-" let g:vimtex_view_general_viewer='zathura'
-" let g:vimtex_view_method='zathura'
-" let g:vimtex_quickfix_mode=0
-" let g:vimtex_compiler_latexmk = {
-"   \  'callback' : 0,
-"   \ }
-
-" " UltiSnips
-" let g:UltiSnipsExpandTrigger = '<tab>'
-" let g:UltiSnipsJumpForwardTrigger = '<tab>'
-" let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-" let g:UltiSnipsSnippetsDir = "~/.local/share/nvim/UltiSnips"
-" let g:UltiSnipsSnippetDirectories = [g:UltiSnipsSnippetsDir]
-" set rtp+=~/.local/share/nvim/plugged/UltiSnips/greek
-
-" nnoremap <leader>l <cmd>VimtexCompile<CR>
 
 
 " Autoclose brackets
@@ -421,5 +294,36 @@ inoremap (<CR> (<CR>)<ESC>O
 inoremap [<CR> [<CR>]<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
 
+" Telescope config
 
+nnoremap <leader>ff <cmd>Telescope find_files<CR>
+nnoremap <leader>fr <cmd>Telescope oldfiles<CR><ESC>
+nnoremap <leader>fg <cmd>Telescope live_grep<CR>
+nnoremap <leader>fb <cmd>Telescope git_branches<CR>
+nnoremap <leader>fs <cmd>Telescope grep_string<CR>
+nnoremap <leader>/  <cmd>Telescope current_buffer_fuzzy_find<CR>
+nnoremap <leader>fd <cmd>Telescope coc document_symbols<CR>
+nnoremap <leader>fw <cmd>Telescope coc workspace_symbols<CR>
+nnoremap <leader>fe <cmd>Telescope coc diagnostics<CR><ESC>
+nnoremap <silent>gr <cmd>Telescope coc references<CR><ESC>
+nnoremap <leader>z  <cmd>Telescope zoxide list<CR>
+nnoremap <leader>rr <cmd>Telescope neoclip plus<CR><ESC>
+nnoremap <leader>gg <cmd>lua require('telescope').extensions.repo.list{fd_opts=[[--ignore-file=/home/jamesseymour/.fdignore]]}<CR>
+
+lua << EOF
+require("telescope").setup({
+  extensions = {
+    coc = {
+        prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc
+    },
+  },
+})
+require('telescope').load_extension('coc')
+require('telescope').load_extension('fzf')
+require('telescope').load_extension('bookmarks')
+require('telescope').load_extension('zoxide')
+require('telescope').load_extension('repo')
+require('neoclip').setup()
+require('telescope').load_extension('neoclip')
+EOF
 
