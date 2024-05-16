@@ -72,6 +72,8 @@ Plug 'simrat39/rust-tools.nvim'
 call plug#end()
 
 
+nmap <leader>cd :Copilot disable<CR>
+
 " Leap config
 lua require('leap').add_default_mappings()
 
@@ -163,6 +165,7 @@ Glaive codefmt zprint_executable="/usr/bin/zprint"
 " JS / TS / CSS / etc.
 Glaive codefmt prettier_executable="/usr/bin/prettier" 
 
+
 augroup autoformat_settings
   autocmd FileType bzl AutoFormatBuffer buildifier
   autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
@@ -174,6 +177,7 @@ augroup autoformat_settings
   autocmd FileType python AutoFormatBuffer black
   autocmd FileType rust AutoFormatBuffer rustfmt
   autocmd FileType vue,typescript AutoFormatBuffer prettier
+  autocmd FileType ocaml AutoFormatBuffer ocamlformat
 augroup END
 
 nnoremap <leader>i :FormatCode<CR>
@@ -191,7 +195,7 @@ nnoremap <C-f> :NERDTreeFind<CR>
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif " Quit vim if nerd tree is the last open
 
 " Rooter config
-let g:rooter_patterns = ['.git', '=src', '=cubiko']
+let g:rooter_patterns = ['=cubiko-manage', '.git']
 
 " Comment out like VSCode
 nnoremap <C-c> :Commentary<CR>
@@ -204,7 +208,7 @@ vnoremap { }
 vnoremap } {
 
 " TMUX prefix key shouldn't map
-nnoremap <C-a> <nop>
+nnoremap <C-s> <nop>
 
 " VSCode like working tree
 nnoremap <leader>wt :Gdiffsplit<CR>
@@ -259,6 +263,12 @@ nnoremap <leader>bl :BlamerToggle<CR>
        \ }
 let g:lightline#extensions#tmuxline#enabled = 0
 
+" Resize splits
+nnoremap <M-,> <c-w>5<<CR>
+nnoremap <M-.> <c-w>5><CR>
+nnoremap <M-j> <C-W>+<CR>
+nnoremap <M-k> <C-W>-<CR>
+
 
 " Autoclose brackets
 " Cancel out autoclose with a tab
@@ -303,7 +313,7 @@ nnoremap <leader>ff <cmd>Telescope find_files<CR>
 nnoremap <leader>fr <cmd>Telescope oldfiles<CR><ESC>
 nnoremap <leader>fg <cmd>Telescope live_grep<CR>
 nnoremap <leader>fb <cmd>Telescope git_branches<CR>
-nnoremap <leader>fs <cmd>Telescope grep_string<CR>
+nnoremap <leader>fs <cmd>Telescope grep_string<CR><ESC>
 nnoremap <leader>/  <cmd>Telescope current_buffer_fuzzy_find<CR>
 nnoremap <leader>fd <cmd>Telescope coc document_symbols<CR>
 nnoremap <leader>fw <cmd>Telescope coc workspace_symbols<CR>
