@@ -20,6 +20,13 @@ Install with: `curl -sS https://starship.rs/install.sh | zsh`
 [Tmux](https://github.com/tmux/tmux)
 Install with `sudo apt install tmux`
 
+[FZF](https://github.com/junegunn/fzf)
+Install with: 
+```
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+```
+
 ### Terminal Appearance
 
 [Cousine Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Cousine.zip)
@@ -27,7 +34,7 @@ Install with: `wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3
 
 ## Neovim
 
-Note: telescope-fzf-native.nvim requires `make` and `fzf` to be installed with `sudo apt install make fzf`
+Note: telescope-fzf-native.nvim requires `make` to be installed with `sudo apt install make`
 
 [Vim Plug](https://github.com/junegunn/vim-plug)
 ```
