@@ -20,6 +20,8 @@ bindkey -e # emacs defaults
 bindkey '^n' history-search-backward
 bindkey '^p' history-search-forward
 
+zstyle ':completion:*' menu no # disable default completion menu
+
 # vim
 export VISUAL=nvim
 export EDITOR="$VISUAL"
@@ -136,9 +138,13 @@ fi
 
 source "${ZINIT_HOME}/zinit.zsh"
 
+# Enable fzf zsh integration - must happen before zinit fzf-tab
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-autosuggestions
+zinit light Aloxaf/fzf-tab
 
 autoload o-Uz compinit && compinit
 
