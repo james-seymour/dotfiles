@@ -5,10 +5,20 @@ autoload -Uz promptinit
 setopt APPEND_HISTORY
 setopt SHARE_HISTORY
 setopt EXTENDED_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
 HISTFILE=$HOME/.zhistory
+HISTDUP=erase
 SAVEHIST=100000
 HISTSIZE=100000
 CLICOLOR=1
+
+# keybindings
+bindkey -e # emacs defaults
+bindkey '^n' history-search-backward
+bindkey '^p' history-search-forward
 
 # vim
 export VISUAL=nvim
@@ -19,24 +29,24 @@ export VIMRUNTIME=/snap/bin/nvim
 export GCM_CREDENTIAL_STORE=cache
 
 # airflow-ish
-export AIRFLOW_HOME="/home/jamesseymour/"
-export DAGSTER_HOME="/home/jamesseymour/Cubiko/dagster"
+export AIRFLOW_HOME=$HOME
+export DAGSTER_HOME=$HOME/Cubiko/dagster
 
 # gurobi
 export GUROBI_HOME=/opt/gurobi951/linux64
 export LD_LIBRARY_PATH=/opt/gurobi951/linux64/lib
 
 # bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH=$BUN_INSTALL/bin:$PATH
+export BUN_INSTALL=$HOME/.bun
 
 # path
-path+=('/opt/gurobi951/linux64/bin')
-path+=('/home/jamesseymour/anaconda/bin')
-path+=('/home/jamesseymour/.poetry/bin')
-path+=('/usr/local/go/bin')
-path+=('/home/jamesseymour/.local/share/pnpm')
-path+=('/root/.local/bin')
+path+=("$HOME/.bun/bin")
+path+=("/opt/gurobi951/linux64/bin")
+path+=("/home/jamesseymour/anaconda/bin")
+path+=("/home/jamesseymour/.poetry/bin")
+path+=("/usr/local/go/bin")
+path+=("$HOME/.local/share/pnpm")
+path+=("/root/.local/bin")
 
 # aliases
 
@@ -44,6 +54,13 @@ path+=('/root/.local/bin')
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
 fi
+
+# Config aliases
+alias vc="vim $HOME/.vimrc"
+alias zc="vim $HOME/.zshrc"
+alias kc="vim $HOME/kitty.conf"
+alias tc="vim $HOME/.tmux.conf"
+alias szc="source $HOME/.zshrc"
 
 # Temporal alias
 alias tctl="docker exec temporal-admin-tools tctl"
@@ -53,21 +70,11 @@ alias uni="cd ~/OneDrive/Uni\ Year\ 3/"
 alias moss="ssh s4641758@moss.labs.eait.uq.edu.au"
 
 # Tmux aliases
-alias Tcub="tmux new -A -s Cubiko"
-alias Tcubdev="tmux new -A -s CubikoDev"
-alias Tuni="tmux new -A -s Uni"
 alias T="tmux new -A -s clowntown"
 
 
-# Config aliases
-alias vc="vim $HOME/.vimrc"
-alias zc="vim $HOME/.zshrc"
-alias kc="vim $HOME/kitty.conf"
-alias tc="vim $HOME/.tmux.conf"
-alias szc="source $HOME/.zshrc"
-
 # Git aliases
-alias gcm="git commit"
+alias g="graphene"
 alias gco="git checkout"
 alias gpl="git fetch && git pull"
 alias gps="git push"
@@ -89,22 +96,12 @@ alias gb='git branch --sort=-committerdate | head -20'
 alias newpush="git rev-parse --abbrev-ref HEAD | xargs git push -u origin"
 
 # Cubiko aliases!
-alias cdman="cd $HOME/Git-Cubiko/cubiko-manage"
-alias cdcube="cd $HOME/Git-Cubiko/cubiko-manage/cube/"
-alias cddata="cd $HOME/Git-Cubiko/data-pipeline"
+alias doit="./doit"
+alias login="aws sso login"
 
-alias up="cd $HOME/Git-Cubiko/cubiko-manage; sudo /etc/init.d/redis-server stop; bin/up.sh"
-alias dev="cd $HOME/Git-Cubiko/cubiko-manage; bin/dev-server-mocked.sh"
-alias cube="cd $HOME/Git-Cubiko/cubiko-manage/cube; npm run dev"
-
-alias Vman="cd $HOME/Git-Cubiko/cubiko-manage; vim"
-alias Vcube="cd $HOME/Git-Cubiko/cube-snowflake-poc; vim"
-alias Vdata="cd $HOME/Git-Cubiko/data-pipeline; vim"
-
-alias cenv="source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/cubiko-manage/db/.venv/bin/activate"
 alias denv="source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/data-pipeline/.venv/bin/activate"
+alias cenv="source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/cubiko-manage/db/.venv/bin/activate"
 alias dbtp="vim ~/.dbt/profiles.yml"
-alias proj="vim ~/Git-Cubiko/data-pipeline/dbt/bp/dbt_project.yml"
 
 alias drs="doit run:dbt:bp run --practice-id demo001"
 alias dcs="doit run:dbt:bp compile --practice-id demo001"
@@ -115,18 +112,6 @@ alias dcc="doit run:dbt:bp compile --dialect clickhouse --practice-id demo001"
 alias dtc="doit run:dbt:bp test --dialect clickhouse --practice-id demo001"
 alias dsc="./doit run:dbt:bp seed --dialect clickhouse --practice-id demo001"
 
-alias cing="python -m data_pipeline.cmd.ingest_clickhouse_practice best_practice chc001 --data-source raw"
-alias rcrc="python -m data_pipeline.cmd.reconcile_clickhouse_rowcounts james.seymour@cubiko.com.au --practice-id dok001 --environment dev"
-alias rct="python -m data_pipeline.cmd.reconcile_clickhouse_tables james.seymour@cubiko.com.au --practice-id demo001"
-
-alias doit="./doit"
-alias dags="python -m data_pipeline.dags.data_pipeline_dags"
-
-alias login="aws sso login"
-alias filecount="find . -type f | cut -d"/" -f2 | uniq -c"
-
-alias startch="sudo systemctl start clickhouse-server"
-alias stopch="sudo systemctl stop clickhouse-server"
 alias cc="clickhouse-client --password password"
 
 
@@ -140,15 +125,24 @@ alias kxcub="kx arn:aws:eks:ap-southeast-2:512832504782:cluster/k8s-cluster-prod
 # Alias ls for exa
 alias ls='exa'
 
-# Plugins for zsh for behave a little like fish
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# ZInit plugins
 
-# ZSH completions
-fpath=(~/.zsh/tabcompletion $fpath)
+export ZINIT_HOME="$HOME/.local/share/zinit/zinit.git"
+
+if [ ! -d "$ZINIT_HOME" ]; then
+  mkdir -p "$(dirname $ZINIT_HOME)"
+  git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+source "${ZINIT_HOME}/zinit.zsh"
+
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-autosuggestions
+
 autoload o-Uz compinit && compinit
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
+# eval "$(opam env --switch=default)"
 
-autoload -U +X bashcompinit && bashcompinit

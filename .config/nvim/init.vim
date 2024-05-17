@@ -223,7 +223,7 @@ function! ToggleGStatus()
     if buflisted(bufname('.git/index'))
         bd .git/index
     else
-        G | resize 20 " Don't want it to take up half of the page!
+        G | resize 15 " Don't want it to take up half of the page!
     endif
 endfunction
 
