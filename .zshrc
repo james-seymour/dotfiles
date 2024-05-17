@@ -16,7 +16,7 @@ HISTSIZE=100000
 CLICOLOR=1
 
 # keybindings
-bindkey -e # emacs defaults
+bindkey -v # vim defaults
 bindkey '^n' history-search-backward
 bindkey '^p' history-search-forward
 
@@ -51,6 +51,7 @@ path+=("$HOME/.local/share/pnpm")
 path+=("/root/.local/bin")
 
 # aliases
+
 
 # alias nvim to vim for convenience
 if type nvim > /dev/null 2>&1; then
@@ -151,4 +152,3 @@ autoload o-Uz compinit && compinit
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 # eval "$(opam env --switch=default)"
-
