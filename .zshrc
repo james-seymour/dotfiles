@@ -49,6 +49,8 @@ path+=("/home/jamesseymour/.poetry/bin")
 path+=("/usr/local/go/bin")
 path+=("$HOME/.local/share/pnpm")
 path+=("/root/.local/bin")
+path+=("$HOME/Git-Cubiko/data-pipeline/.venv/bin")
+path+=("$HOME/Git-Cubiko/cubiko-manage/bin/format")
 
 # aliases
 
@@ -117,6 +119,15 @@ alias dsc="./doit run:dbt:bp seed --dialect clickhouse --practice-id demo001"
 
 alias cc="clickhouse-client --password password"
 
+# Aviator aliases
+alias gtco="av stack tree"
+alias gtc="av stack branch-commit"
+alias gtm="av commit amend"
+alias gts="av stack submit"
+alias gtsync="av stack sync"
+alias gtmove="av stack reorder"
+alias gtd="av stack prev"
+alias gtu="av stack next"
 
 # Kube config
 kx() {

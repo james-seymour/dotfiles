@@ -11,8 +11,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 " VIM enhancements
 Plug 'tpope/vim-commentary' " Comment things out easily
 Plug 'tpope/vim-surround' " Change surrounding quotes with cs{old}{new}
-Plug 'google/vim-codefmt' " A nice formatter!
-Plug 'google/vim-glaive' " Config for codefmt
+Plug 'stevearc/conform.nvim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'ggandor/leap.nvim'
 
@@ -23,7 +22,6 @@ Plug 'APZelos/blamer.nvim' " Git blame
 Plug 'stsewd/fzf-checkout.vim' " Fuzzy search branches
 
 " Support
-Plug 'google/vim-maktaba' " codefmt dependency
 Plug 'nvim-lua/plenary.nvim' " Telescope dependency
 Plug 'nvim-treesitter/nvim-treesitter' " Telescope dependency
 Plug 'nvim-lua/popup.nvim' " Telescope zoxide dependency
@@ -156,31 +154,6 @@ if has("autocmd")
   au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-" Code format
-call glaive#Install() " Load glaive
-" Zprint
-" !This is symlinked to cubiko-manage zprint!
-Glaive codefmt zprint_executable="/usr/bin/zprint" 
-
-" JS / TS / CSS / etc.
-Glaive codefmt prettier_executable="/usr/bin/prettier" 
-
-
-augroup autoformat_settings
-  autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-  autocmd FileType dart AutoFormatBuffer dartfmt
-  autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-  autocmd FileType java AutoFormatBuffer google-java-format
-  autocmd FileType python AutoFormatBuffer black
-  autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType vue,typescript AutoFormatBuffer prettier
-  autocmd FileType ocaml AutoFormatBuffer ocamlformat
-augroup END
-
-nnoremap <leader>i :FormatCode<CR>
 
 map <leader>s :w<CR>
 map <leader>q :w<CR><C-Z>
@@ -338,5 +311,25 @@ require('telescope').load_extension('zoxide')
 require('telescope').load_extension('repo')
 require('neoclip').setup()
 require('telescope').load_extension('neoclip')
+require("conform").setup({
+  formatters_by_ft = {
+    lua = { "stylua" },
+    -- Conform will run multiple formatters sequentially
+    python = { "ruff_format", "ruff_fix" },
+    -- Use a sub-list to run only the first available formatter
+    javascript = { { "prettierd", "prettier" } },
+    clojure = { "zprint" },
+  },
+  format_on_save = {
+    -- These options will be passed to conform.format()
+    timeout_ms = 500,
+    lsp_format = "fallback",
+  },
+})
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*",
+  callback = function(args)
+    require("conform").format({ bufnr = args.buf })
+  end,
+})
 EOF
-
