@@ -51,6 +51,7 @@ path+=("$HOME/.local/share/pnpm")
 path+=("/root/.local/bin")
 path+=("$HOME/Git-Cubiko/data-pipeline/.venv/bin")
 path+=("$HOME/Git-Cubiko/cubiko-manage/bin/format")
+path+=("$HOME/.rye/shims")
 
 # aliases
 
@@ -98,7 +99,21 @@ gitreset () {
 }
 alias gb='git branch --sort=-committerdate | head -20'
 
+tslap () {
+  sudo tailscale file cp "$@" james-seymour-laptop:
+}
+
+tshome () {
+  sudo tailscale file cp "$@" james-seymour-home:
+}
+
+trecv () {
+  sudo tailscale file get .
+}
+
 alias newpush="git rev-parse --abbrev-ref HEAD | xargs git push -u origin"
+
+alias uuid="python -c 'import uuid; print(uuid.uuid4())'"
 
 # Cubiko aliases!
 alias doit="./doit"
@@ -116,6 +131,9 @@ alias drc="doit run:dbt:bp run --dialect clickhouse --practice-id demo001"
 alias dcc="doit run:dbt:bp compile --dialect clickhouse --practice-id demo001"
 alias dtc="doit run:dbt:bp test --dialect clickhouse --practice-id demo001"
 alias dsc="./doit run:dbt:bp seed --dialect clickhouse --practice-id demo001"
+
+alias apireload="curl localhost:3000/token-openapi.json | jq > ~/Git-Cubiko/data-pipeline/py/api_manage_client/src/cubiko/apis/manage/models/manage_api.json && doit codegen"
+alias dallasreload="curl localhost:8001/openapi.json | jq > ~/Git-Cubiko/data-pipeline/py/dallas/src/dallas/api/openapi.json && doit codegen"
 
 alias cc="clickhouse-client --password password"
 
