@@ -25,7 +25,6 @@ zstyle ':completion:*' menu no # disable default completion menu
 # vim
 export VISUAL=nvim
 export EDITOR="$VISUAL"
-export VIMRUNTIME=/snap/bin/nvim
 
 # git
 export GCM_CREDENTIAL_STORE=cache
@@ -44,17 +43,19 @@ export BUN_INSTALL=$HOME/.bun
 # path
 path+=("$HOME/.bun/bin")
 path+=("/opt/gurobi951/linux64/bin")
-path+=("/home/jamesseymour/anaconda/bin")
-path+=("/home/jamesseymour/.poetry/bin")
+path+=("/home/james/anaconda/bin")
+path+=("/home/james/.poetry/bin")
 path+=("/usr/local/go/bin")
 path+=("$HOME/.local/share/pnpm")
 path+=("/root/.local/bin")
 path+=("$HOME/Git-Cubiko/data-pipeline/.venv/bin")
 path+=("$HOME/Git-Cubiko/cubiko-manage/bin/format")
 path+=("$HOME/.rye/shims")
+path+=("$HOME/.cargo/bin")
 
 # aliases
-
+alias down="docker compose down --volumes"
+alias up="docker compose up"
 
 # alias nvim to vim for convenience
 if type nvim > /dev/null 2>&1; then
@@ -133,9 +134,11 @@ alias dtc="doit run:dbt:bp test --dialect clickhouse --practice-id demo001"
 alias dsc="./doit run:dbt:bp seed --dialect clickhouse --practice-id demo001"
 
 alias apireload="curl localhost:3000/token-openapi.json | jq > ~/Git-Cubiko/data-pipeline/py/api_manage_client/src/cubiko/apis/manage/models/manage_api.json && doit codegen"
-alias dallasreload="curl localhost:8001/openapi.json | jq > ~/Git-Cubiko/data-pipeline/py/dallas/src/dallas/api/openapi.json && doit codegen"
 
 alias cc="clickhouse-client --password password"
+
+# Calculate aliases
+alias mock="echo '00000000-0000-0000-0000-0000000001a4' | xclip -selection clipboard"
 
 # Aviator aliases
 alias gtco="av stack tree"
