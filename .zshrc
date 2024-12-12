@@ -111,6 +111,10 @@ tshome () {
 trecv () {
   sudo tailscale file get .
 }
+pareq() {
+  seq $1 | parallel --max-args 0 --jobs $2 $3
+}
+
 
 alias newpush="git rev-parse --abbrev-ref HEAD | xargs git push -u origin"
 
