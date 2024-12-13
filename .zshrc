@@ -43,14 +43,13 @@ export BUN_INSTALL=$HOME/.bun
 # path
 path+=("$HOME/.bun/bin")
 path+=("/opt/gurobi951/linux64/bin")
-path+=("/home/james/anaconda/bin")
-path+=("/home/james/.poetry/bin")
+path+=("/home/jamesseymour/anaconda/bin")
+path+=("/home/jamesseymour/.poetry/bin")
 path+=("/usr/local/go/bin")
 path+=("$HOME/.local/share/pnpm")
 path+=("/root/.local/bin")
 path+=("$HOME/Git-Cubiko/data-pipeline/.venv/bin")
 path+=("$HOME/Git-Cubiko/cubiko-manage/bin/format")
-path+=("$HOME/.rye/shims")
 path+=("$HOME/.cargo/bin")
 
 # aliases
@@ -124,7 +123,7 @@ alias uuid="python -c 'import uuid; print(uuid.uuid4())'"
 alias doit="./doit"
 alias login="aws sso login"
 
-alias denv="source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/data-pipeline/.venv/bin/activate"
+alias denv="uv sync --all-packages; source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/data-pipeline/.venv/bin/activate"
 alias cenv="source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/cubiko-manage/db/.venv/bin/activate"
 alias dbtp="vim ~/.dbt/profiles.yml"
 
@@ -153,6 +152,8 @@ alias gtsync="av stack sync"
 alias gtmove="av stack reorder"
 alias gtd="av stack prev"
 alias gtu="av stack next"
+
+alias sb="localectl set-keymap us"
 
 # Kube config
 kx() {

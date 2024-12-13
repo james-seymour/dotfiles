@@ -14,6 +14,8 @@ Plug 'tpope/vim-surround' " Change surrounding quotes with cs{old}{new}
 Plug 'stevearc/conform.nvim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'ggandor/leap.nvim'
+Plug 'windwp/nvim-autopairs'
+Plug 'TrevorS/uuid-nvim'
 
 " Git integration
 Plug 'tpope/vim-fugitive' " Git integration using :G
@@ -319,6 +321,7 @@ require("conform").setup({
     -- Use a sub-list to run only the first available formatter
     javascript = { { "prettierd", "prettier" } },
     clojure = { "zprint" },
+    rust = { "rustfmt" },
   },
   format_on_save = {
     -- These options will be passed to conform.format()
@@ -332,4 +335,9 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     require("conform").format({ bufnr = args.buf })
   end,
 })
+uuid = require('uuid-nvim')
+uuid.setup{
+  case = 'lower'
+}
+vim.keymap.set('i', '<C-u>', uuid.insert_v4)
 EOF
