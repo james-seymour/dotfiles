@@ -117,7 +117,7 @@ pareq() {
 
 alias newpush="git rev-parse --abbrev-ref HEAD | xargs git push -u origin"
 
-alias uuid="python -c 'import uuid; print(uuid.uuid4())'"
+alias uuid="python -c 'import uuid; print(uuid.uuid4())' | xclip -selection clipboard"
 
 # Cubiko aliases!
 alias doit="./doit"
