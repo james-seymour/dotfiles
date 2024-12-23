@@ -16,6 +16,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'ggandor/leap.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'TrevorS/uuid-nvim'
+Plug 'MagicDuck/grug-far.nvim'
 
 " Git integration
 Plug 'tpope/vim-fugitive' " Git integration using :G
@@ -33,6 +34,7 @@ Plug 'jremmen/vim-ripgrep' " More cracked grep
 " Plug 'guns/vim-sexp' " Slurping
 Plug 'airblade/vim-rooter' " Move to root dir automatically
 Plug 'nvim-telescope/telescope.nvim' " Having a look
+Plug 'ThePrimeagen/harpoon', { 'branch' : 'harpoon2' }
 " Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'fannheyward/telescope-coc.nvim'
@@ -71,8 +73,11 @@ Plug 'simrat39/rust-tools.nvim'
 
 call plug#end()
 
-
+" Copilot
 nmap <leader>cd :Copilot disable<CR>
+
+" Find an replace
+nnoremap <localleader>fr <cmd>GrugFar<CR>
 
 " Leap config
 lua require('leap').add_default_mappings()
@@ -84,7 +89,6 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <leader>rn <Plug>(coc-rename)
-nmap <leader>ac  <Plug>(coc-codeaction)
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
@@ -95,6 +99,7 @@ inoremap <silent><expr> <C-n> coc#pum#visible() ? coc#pum#next(0) : "\<C-n>"
 inoremap <silent><expr> <C-n> coc#pum#visible() ? coc#pum#next(2) : "\<C-n>"
 
 " Coc Hover
+let g:conjure#mapping#doc_word = v:false
 function! ShowDocumentation()
   if CocAction('hasProvider', 'hover')
     call CocActionAsync('doHover')
@@ -210,6 +215,10 @@ nnoremap <leader>gs :ToggleGStatus<CR>
 
 let g:fzf_checkout_git_options = '--sort=-committerdate'
 
+nnoremap <leader>cc :!zsh -c "gt m"<CR>
+nnoremap <leader>gdl :Gdiff HEAD~1<CR>
+nnoremap <leader>gdm :Gdiff main<CR>
+
 " Git blame
 nnoremap <leader>bl :BlamerToggle<CR>
 
@@ -292,13 +301,13 @@ nnoremap <leader>fs <cmd>Telescope grep_string<CR><ESC>
 nnoremap <leader>/  <cmd>Telescope current_buffer_fuzzy_find<CR>
 nnoremap <leader>fd <cmd>Telescope coc document_symbols<CR>
 nnoremap <leader>fw <cmd>Telescope coc workspace_symbols<CR>
-nnoremap <leader>fe <cmd>Telescope coc diagnostics<CR><ESC>
 nnoremap <silent>gr <cmd>Telescope coc references<CR><ESC>
 nnoremap <leader>z  <cmd>Telescope zoxide list<CR>
 nnoremap <leader>rr <cmd>Telescope neoclip plus<CR><ESC>
-nnoremap <leader>gg <cmd>lua require('telescope').extensions.repo.list{fd_opts=[[--ignore-file=/home/jamesseymour/.fdignore]]}<CR>
+nnoremap <leader>gg <cmd>Telescope resume<CR><ESC>
 
 lua << EOF
+require('grug-far').setup()
 require("telescope").setup({
   extensions = {
     coc = {
@@ -340,4 +349,36 @@ uuid.setup{
   case = 'lower'
 }
 vim.keymap.set('i', '<C-u>', uuid.insert_v4)
+harpoon = require('harpoon')
+
+harpoon:setup()
+
+vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+vim.keymap.set("n", "<leader>d", function() harpoon:list():remove() end)
+
+local conf = require("telescope.config").values
+local function toggle_telescope(harpoon_files)
+    local file_paths = {}
+    for _, item in ipairs(harpoon_files.items) do
+        table.insert(file_paths, item.value)
+    end
+
+    require("telescope.pickers").new({}, {
+        prompt_title = "Harpoon",
+        finder = require("telescope.finders").new_table({
+            results = file_paths,
+        }),
+        previewer = conf.file_previewer({}),
+        sorter = conf.generic_sorter({}),
+    }):find()
+
+    vim.api.nvim_input('<ESC>')
+end
+
+
+vim.keymap.set("n", "<leader>fe", function() toggle_telescope(harpoon:list()) end,
+    { desc = "Open harpoon window" })
+
+vim.keymap.set("n", "<C-P>", function() harpoon:list():prev() end)
+vim.keymap.set("n", "<C-N>", function() harpoon:list():next() end)
 EOF

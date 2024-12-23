@@ -142,6 +142,7 @@ alias cc="clickhouse-client --password password"
 
 # Calculate aliases
 alias mock="echo '00000000-0000-0000-0000-0000000001a4' | xclip -selection clipboard"
+alias scs="echo '695e7fc8-ff49-4b1a-b7e0-f8c411bbb7a1' | xclip -selection clipboard"
 
 # Aviator aliases
 alias gtco="av stack tree"
