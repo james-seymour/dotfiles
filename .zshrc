@@ -54,8 +54,10 @@ path+=("$HOME/.rye/shims")
 path+=("$HOME/.cargo/bin")
 
 # aliases
+alias open="xdg-open"
 alias down="docker compose down --volumes"
 alias up="docker compose up"
+alias tmpd="cd $(mktemp -d)"
 
 # alias nvim to vim for convenience
 if type nvim > /dev/null 2>&1; then
@@ -101,7 +103,7 @@ gitreset () {
 alias gb='git branch --sort=-committerdate | head -20'
 
 tslap () {
-  sudo tailscale file cp "$@" james-seymour-laptop:
+  sudo tailscale file cp "$@" james-seymour-laptop-v2:
 }
 
 tshome () {
@@ -123,6 +125,10 @@ alias uuid="python -c 'import uuid; print(uuid.uuid4())' | xclip -selection clip
 # Cubiko aliases!
 alias doit="./doit"
 alias login="aws sso login"
+alias rf="doit check:ruff:dallas"
+alias mp="doit check:mypy:dallas"
+alias ti="doit test:py:integration:dallas --"
+alias tu="doit test:py:dallas --"
 
 alias denv="uv sync --all-packages; source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/data-pipeline/.venv/bin/activate"
 alias cenv="source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/cubiko-manage/db/.venv/bin/activate"
@@ -143,7 +149,8 @@ alias cc="clickhouse-client --password password"
 
 # Calculate aliases
 alias mock="echo '00000000-0000-0000-0000-0000000001a4' | xclip -selection clipboard"
-alias scs="echo '695e7fc8-ff49-4b1a-b7e0-f8c411bbb7a1' | xclip -selection clipboard"
+alias scs="echo '4102e9e4-13ed-4479-8775-8a3cfbe1dd6a' | xclip -selection clipboard"
+alias abn="echo '76 217 322 518' | xclip -selection clipboard"
 
 # Aviator aliases
 alias gtco="av stack tree"
@@ -189,3 +196,10 @@ autoload o-Uz compinit && compinit
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 # eval "$(opam env --switch=default)"
+
+# fnm
+FNM_PATH="/home/james/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="/home/james/.local/share/fnm:$PATH"
+  eval "`fnm env`"
+fi

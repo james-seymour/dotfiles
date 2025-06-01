@@ -216,6 +216,7 @@ nnoremap <leader>gs :ToggleGStatus<CR>
 let g:fzf_checkout_git_options = '--sort=-committerdate'
 
 nnoremap <leader>cc :!zsh -c "gt m"<CR>
+nnoremap <leader>cs :!zsh -c "gt s"<CR>
 nnoremap <leader>gdl :Gdiff HEAD~1<CR>
 nnoremap <leader>gdm :Gdiff main<CR>
 
@@ -326,11 +327,17 @@ require("conform").setup({
   formatters_by_ft = {
     lua = { "stylua" },
     -- Conform will run multiple formatters sequentially
-    python = { "ruff_format", "ruff_fix" },
+    python = { "ruff_format", "ruff_fix", "ruff_organize_imports" },
     -- Use a sub-list to run only the first available formatter
-    javascript = { { "prettierd", "prettier" } },
+    javascript = { "biome-check", "biome-organize-imports" },
+    typescript = { "biome-check", "biome-organize-imports" },
     clojure = { "zprint" },
   },
+  formatter = {
+    zprint = {
+      prepend_args = { "{:search-config? true}" },
+    },
+  },
   format_on_save = {
     -- These options will be passed to conform.format()
     timeout_ms = 5000,
