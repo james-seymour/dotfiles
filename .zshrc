@@ -52,6 +52,7 @@ path+=("$HOME/Git-Cubiko/data-pipeline/.venv/bin")
 path+=("$HOME/Git-Cubiko/cubiko-manage/bin/format")
 path+=("$HOME/.rye/shims")
 path+=("$HOME/.cargo/bin")
+path+=("$HOME/code/waterway/target/debug/")
 
 # aliases
 alias open="xdg-open"
@@ -81,13 +82,20 @@ alias moss="ssh s4641758@moss.labs.eait.uq.edu.au"
 # Tmux aliases
 alias T="tmux new -A -s clowntown"
 
+# Git spice aliases
+alias gm="gs commit amend --no-edit"
+alias gc="gs branch create"
+alias gco="gs branch checkout"
+alias gss="gs stack submit"
+alias gsc="gs repo sync"
+alias gra="gs rebase abort"
+alias grc="gs rebase continue"
+
+# Github aliases
+alias gpr="gh pr view --web"
 
 # Git aliases
-alias g="graphene"
-alias gco="git checkout"
-alias gpl="git fetch && git pull"
-alias gps="git push"
-alias tags="git push --tags"
+alias glg="git lg"
 gittags() {
   git tag -l "$1/*" --sort -v:refname | head -10
 }
@@ -129,6 +137,7 @@ alias rf="doit check:ruff:dallas"
 alias mp="doit check:mypy:dallas"
 alias ti="doit test:py:integration:dallas --"
 alias tu="doit test:py:dallas --"
+alias d="uv sync --package dallas"
 
 alias denv="uv sync --all-packages; source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/data-pipeline/.venv/bin/activate"
 alias cenv="source $HOME/Git-Cubiko/data-pipeline/env.sh; source $HOME/Git-Cubiko/cubiko-manage/db/.venv/bin/activate"
@@ -203,3 +212,7 @@ if [ -d "$FNM_PATH" ]; then
   export PATH="/home/james/.local/share/fnm:$PATH"
   eval "`fnm env`"
 fi
+
+eval "$(/home/james/.local/bin/mise activate zsh)" # added by https://mise.run/zsh
+autoload -U +X bashcompinit && bashcompinit
+complete -C /home/james/.local/share/mise/installs/ubi-abhinav-git-spice/0.18.0/gs gs

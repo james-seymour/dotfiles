@@ -64,6 +64,7 @@ Plug 'edkolev/tmuxline.vim'
 " LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'Olical/conjure' " REPL support
+" Plug 'ziglang/zig.vim'
 " Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins' } " Extra syntax highlighting for python
 Plug 'neovim/nvim-lspconfig'
 Plug 'simrat39/rust-tools.nvim'
@@ -212,13 +213,15 @@ set diffopt+=vertical
 command ToggleGStatus :call ToggleGStatus()
 
 nnoremap <leader>gs :ToggleGStatus<CR>
+nnoremap <leader>gd :Gdiffsplit<CR>
 
 let g:fzf_checkout_git_options = '--sort=-committerdate'
 
-nnoremap <leader>cc :!zsh -c "gt m"<CR>
-nnoremap <leader>cs :!zsh -c "gt s"<CR>
-nnoremap <leader>gdl :Gdiff HEAD~1<CR>
-nnoremap <leader>gdm :Gdiff main<CR>
+" nnoremap <leader>cc :!zsh -c "gt m"<CR>
+" nnoremap <leader>cs :!zsh -c "gt s"<CR>
+nnoremap <leader>o
+nnoremap <leader>gl :Gdiff HEAD~1<CR>
+nnoremap <leader>gm :Gdiff main<CR>
 
 " Git blame
 nnoremap <leader>bl :BlamerToggle<CR>
@@ -329,9 +332,10 @@ require("conform").setup({
     -- Conform will run multiple formatters sequentially
     python = { "ruff_format", "ruff_fix", "ruff_organize_imports" },
     -- Use a sub-list to run only the first available formatter
-    javascript = { "biome-check", "biome-organize-imports" },
-    typescript = { "biome-check", "biome-organize-imports" },
+    javascript = { "biome-check", },
+    typescript = { "biome-check", },
     clojure = { "zprint" },
+    rust = { "rustfmt" },
   },
   formatter = {
     zprint = {
