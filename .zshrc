@@ -86,16 +86,47 @@ alias T="tmux new -A -s clowntown"
 alias gm="gs commit amend --no-edit"
 alias gc="gs branch create"
 alias gco="gs branch checkout"
-alias gss="gs stack submit"
-alias gsc="gs repo sync"
+alias gss="gs stack submit --fill"
+alias gsb="gs branch submit"
+alias gssnf="gs stack submit"
+alias gsn="gs repo sync --restack"
+alias grr="gs repo restack"
 alias gra="gs rebase abort"
 alias grc="gs rebase continue"
 
 # Github aliases
-alias gpr="gh pr view --web"
+alias ghpr="gh pr view --web"
+
+# Stacksmith
+spr() {
+  local url owner repo branch
+
+  # Get remote URL
+  url=$(git remote get-url origin 2>/dev/null) || {
+    echo "❌ No 'origin' remote found." >&2
+    return 1
+  }
+
+  # Extract owner and repo
+  owner=$(echo "$url" | sed -E 's#.*[:/]([^/]+)/([^/]+)(\.git)?$#\1#')
+  repo=$(echo "$url" | sed -E 's#.*[:/]([^/]+)/([^/]+)(\.git)?$#\2#')
+  repo=${repo%.git}
+
+  # Get current branch
+  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || {
+    echo "❌ Not a git repository or no branch found." >&2
+    return 1
+  }
+  # move to bottom of stack
+  gs bottom
+
+  # open stacksmith url
+  open "http://localhost:5173/stacks/${owner}/${repo}/${owner}-${repo}-${branch}"
+}
 
 # Git aliases
 alias glg="git lg"
+alias gpr="gh pr view --web"
 gittags() {
   git tag -l "$1/*" --sort -v:refname | head -10
 }

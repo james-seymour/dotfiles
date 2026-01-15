@@ -310,6 +310,15 @@ nnoremap <leader>z  <cmd>Telescope zoxide list<CR>
 nnoremap <leader>rr <cmd>Telescope neoclip plus<CR><ESC>
 nnoremap <leader>gg <cmd>Telescope resume<CR><ESC>
 
+
+nunmap grr
+nunmap gra
+nunmap grn
+nunmap gri
+nunmap grt
+nunmap gO
+iunmap <C-S>
+
 lua << EOF
 require('grug-far').setup()
 require("telescope").setup({
@@ -336,6 +345,7 @@ require("conform").setup({
     typescript = { "biome-check", },
     clojure = { "zprint" },
     rust = { "rustfmt" },
+    go = { "gofmt" },
   },
   formatter = {
     zprint = {
