@@ -13,7 +13,7 @@ Plug 'tpope/vim-commentary' " Comment things out easily
 Plug 'tpope/vim-surround' " Change surrounding quotes with cs{old}{new}
 Plug 'stevearc/conform.nvim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'ggandor/leap.nvim'
+Plug 'https://codeberg.org/andyg/leap.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'TrevorS/uuid-nvim'
 Plug 'MagicDuck/grug-far.nvim'
@@ -219,7 +219,7 @@ let g:fzf_checkout_git_options = '--sort=-committerdate'
 
 " nnoremap <leader>cc :!zsh -c "gt m"<CR>
 " nnoremap <leader>cs :!zsh -c "gt s"<CR>
-nnoremap <leader>o
+nnoremap <leader>o :only<CR>
 nnoremap <leader>gl :Gdiff HEAD~1<CR>
 nnoremap <leader>gm :Gdiff main<CR>
 
@@ -310,7 +310,6 @@ nnoremap <leader>z  <cmd>Telescope zoxide list<CR>
 nnoremap <leader>rr <cmd>Telescope neoclip plus<CR><ESC>
 nnoremap <leader>gg <cmd>Telescope resume<CR><ESC>
 
-
 nunmap grr
 nunmap gra
 nunmap grn
@@ -320,6 +319,12 @@ nunmap gO
 iunmap <C-S>
 
 lua << EOF
+-- require('nvim-treesitter.configs').setup {
+--   ensure_installed = { "gleam" },
+--   highlight = {
+--     enable = true,
+--   },
+-- }
 require('grug-far').setup()
 require("telescope").setup({
   extensions = {
@@ -346,6 +351,7 @@ require("conform").setup({
     clojure = { "zprint" },
     rust = { "rustfmt" },
     go = { "gofmt" },
+    gleam = { "gleam" }
   },
   formatter = {
     zprint = {
